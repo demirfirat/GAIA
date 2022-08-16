@@ -192,3 +192,155 @@ gaiad tx staking create-validator \
   --moniker RuesValidator \
   --chain-id GAIA
 ```
+
+###Kullanışlı Komutlar
+
+####Servis Yönetimi
+
+Logları Kontrol Et:
+
+```
+journalctl -fu gaiad -o cat
+```
+Servisi Başlat:
+
+```
+systemctl start gaiad
+```
+
+Servisi Durdur:
+
+```
+systemctl stop gaiad
+```
+
+Servisi Yeniden Başlat:
+
+```
+systemctl restart gaiad
+```
+
+#### Node Bilgileri
+
+Senkronizasyon Bilgisi:
+
+```
+gaiad status 2>&1 | jq .SyncInfo
+```
+
+Validator Bilgisi:
+
+```
+gaiad status 2>&1 | jq .ValidatorInfo
+```
+
+Node Bilgisi:
+
+```
+gaiad status 2>&1 | jq .NodeInfo
+```
+
+Node ID Göser:
+
+```
+gaiad tendermint show-node-id
+```
+
+#### Cüzdan İşlemleri
+
+Cüzdanları Listele:
+
+```
+gaiad keys list
+```
+
+Mnemonic kullanarak cüzdanı kurtar:
+
+```
+gaiad keys add $GAIA_WALLET --recover
+```
+
+Cüzdan Silme:
+
+```
+gaiad keys delete $GAIA_WALLET
+```
+
+Cüzdan Bakiyesi Sorgulama:
+
+```
+gaiad query bank balances $GAIA_WALLET_ADDRESS
+```
+
+Cüzdandan Cüzdana Bakiye Transferi:
+
+```
+gaiad tx bank send $GAIA_WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000uatom
+```
+
+#### Oylama
+
+```
+gaiad tx gov vote 1 yes --from $GAIA_WALLET --chain-id=$GAIA_ID
+```
+
+#### Stake, Delegasyon ve Ödüller
+
+Delegate İşlemi:
+
+```
+gaiad tx staking delegate $GAIA_VALOPER_ADDRESS 10000000uatom --from=$GAIA_WALLET --chain-id=$GAIA_ID --gas=auto --fees 250uatom
+```
+
+Payını doğrulayıcıdan başka bir doğrulayıcıya yeniden devretme:
+
+```
+gaiad tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000uatom --from=$GAIA_WALLET --chain-id=$GAIA_ID --gas=auto --fees 250uatom
+```
+
+Tüm ödülleri çek:
+
+```
+gaiad tx distribution withdraw-all-rewards --from=$GAIA_WALLET --chain-id=$GAIA_ID --gas=auto --fees 250uatom
+```
+
+Komisyon ile ödülleri geri çekin:
+
+```
+gaiad tx distribution withdraw-rewards $GAIA_VALOPER_ADDRESS --from=$GAIA_WALLET --commission --chain-id=$GAIA_ID
+```
+
+#### Doğrulayıcı Yönetimi
+
+Validatör İsmini Değiştir:
+
+```
+gaiad tx staking edit-validator \
+--moniker=NEWNODENAME \
+--chain-id=$GAIA_ID \
+--from=$GAIA_WALLET
+```
+
+Hapisten Kurtul(Unjail):
+
+```
+gaiad tx slashing unjail \
+  --broadcast-mode=block \
+  --from=$GAIA_WALLET \
+  --chain-id=$GAIA_ID \
+  --gas=auto --fees 250uatom
+```
+
+Node Tamamen Silmek:
+
+```
+sudo systemctl stop gaiad
+sudo systemctl disable gaiad
+sudo rm /etc/systemd/system/gaia* -rf
+sudo rm $(which gaiad) -rf
+sudo rm $HOME/.gaia* -rf
+sudo rm $HOME/gaia -rf
+sed -i '/GAIA_/d' ~/.bash_profile
+```
+
+
