@@ -193,9 +193,9 @@ gaiad tx staking create-validator \
   --chain-id GAIA
 ```
 
-###Kullanışlı Komutlar
+### Kullanışlı Komutlar
 
-####Servis Yönetimi
+#### Servis Yönetimi
 
 Logları Kontrol Et:
 
